@@ -38,11 +38,6 @@ public class StudentService {
     }
 
     public void deleteStudent(long studentId) {
-        boolean exists = studentRepository.existsById(studentId);
-        if (!exists) {
-            throw new IllegalStateException("student with id " + studentId + " does not exist");
-        }
-       
       Student  student = studentRepository.findById(studentId).orElseThrow(() -> new IllegalStateException("student with id " + studentId + " does not exist"));
         for(SubjectInfo subjectInfo:student.getSubjects()){
             dropSubject(studentId,subjectInfo.getId());

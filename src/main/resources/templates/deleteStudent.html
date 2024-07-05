@@ -58,6 +58,9 @@
 <body>
     <div class="container">
         <h2>Xóa học sinh</h2>
+        <div th:if="${message}" class="message">
+            <p th:text="${message}"></p>
+        </div>
         <form action="/deleteStudent" method="post">
             <label for="studentId">ID của học sinh:</label>
             <input type="text" id="studentId" name="studentId" required>

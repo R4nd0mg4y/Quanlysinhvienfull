@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -32,7 +31,7 @@ public class HTMLController {
     @PostMapping("/enroll")
     public String enrollSubject(@RequestParam("studentId") long studentId,
                                 @RequestParam("subjectId") long subjectId,
-                                Model model) {
+                                RedirectAttributes redirectAttributes) {
         // URL API để đăng ký môn học cho học sinh
         String enrollUrl = "http://localhost:8080/api/v1/student/" + studentId + "/enroll?subjectId=" + subjectId;
         
@@ -40,9 +39,10 @@ public class HTMLController {
             // Thực hiện yêu cầu HTTP PUT để đăng ký môn học
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.put(enrollUrl, null);
-            model.addAttribute("message", "Đăng ký môn học thành công!");
+            redirectAttributes.addFlashAttribute("message", "Đăng ký môn học thành công!");
         } catch (Exception e) {
-            model.addAttribute("message", "Lỗi khi đăng ký môn học: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Lỗi khi đăng ký môn học: " + e.getMessage());
+            return "redirect:/enroll";
         }
         
         return "redirect:/"; // Trả về trang HTML sau khi xử lý
@@ -56,7 +56,7 @@ public class HTMLController {
     @PostMapping("/drop")
     public String dropSubject(@RequestParam("studentId") long studentId,
                               @RequestParam("subjectId") long subjectId,
-                              Model model) {
+                              RedirectAttributes redirectAttributes) {
         // URL API để xóa môn học của học sinh
         String dropUrl = "http://localhost:8080/api/v1/student/" + studentId + "/drop?subjectId=" + subjectId;
         
@@ -64,9 +64,10 @@ public class HTMLController {
             // Thực hiện yêu cầu HTTP DELETE để xóa môn học
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.delete(dropUrl);
-            model.addAttribute("message", "Xóa môn học thành công!");
+            redirectAttributes.addFlashAttribute("message", "Xóa môn học thành công!");
         } catch (Exception e) {
-            model.addAttribute("message", "Lỗi khi xóa môn học: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Lỗi khi xóa môn học: " + e.getMessage());
+            return "redirect:/drop";
         }
         
         return "redirect:/"; // Trả về trang HTML sau khi xử lý
@@ -106,11 +107,12 @@ public class HTMLController {
             Student student = new Student(name,email,dob);
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.postForObject(url,student,Student.class);
-            redirectAttributes.addAttribute("message", "Thêm học sinh thành công!");
+            redirectAttributes.addFlashAttribute("message", "Thêm học sinh thành công!");
         } catch (Exception e) {
-            redirectAttributes.addAttribute("message", "Không thêm được sinh viên: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Không thêm được sinh viên: " + e.getMessage());
+            return "redirect:/addStudent";
         }
-        return "redirect:/";
+        return "redirect:/listStudents";
     }
     @GetMapping("/updateStudent")
     public String updateStudentForm() {
@@ -118,21 +120,20 @@ public class HTMLController {
     }
     @PostMapping("/updateStudent")
     public String updateStudent(@RequestParam("studentId") long studentId,@RequestParam(required = false) String studentName,
-    @RequestParam(required = false) String studentEmail, Model model) {
+    @RequestParam(required = false) String studentEmail, RedirectAttributes redirectAttributes) {
         String url = "http://localhost:8080/api/v1/student/" + studentId+"?name="+studentName+"&email="+studentEmail;
         try {
           
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.put(url," ");
 
-            model.addAttribute("message", "Cập nhật học sinh thành công!");
-        } catch (HttpClientErrorException.NotFound e) {
-            model.addAttribute("message", "Không tìm thấy sinh viên để xóa.");
+            redirectAttributes.addFlashAttribute("message", "Cập nhật học sinh thành công!");
         } catch (Exception e) {
-            model.addAttribute("message", "Lỗi khi cập nhật học sinh: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Lỗi khi cập nhật học sinh: " + e.getMessage());
+            return "redirect:/updateStudent";
         }
 
-        return "redirect:/";
+        return "redirect:/listStudents";
     }
     @GetMapping("/listSubjects")
     public String listSubjects(Model model) {
@@ -158,41 +159,41 @@ public class HTMLController {
     public String addSubjectForm() {
         return "addSubject";
     }
-    @GetMapping("/updateSubject")
-    public String updateSubjectForm() {
-        return "updateSubject";
-    }
+    
     @PostMapping("/addSubject")
-    public String addSubject(Model model,@RequestParam(required = true) String name,
+    public String addSubject(RedirectAttributes redirectAttributes,@RequestParam(required = true) String name,
     @RequestParam(required = true) Integer numberOfslot){
         String url = "http://localhost:8080/api/v1/subject";
         try{
             Subject subject = new Subject(name,numberOfslot);
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.postForObject(url,subject,Subject.class);
-            model.addAttribute("message", "Thêm môn học thành công!");
+            redirectAttributes.addFlashAttribute("message", "Thêm môn học thành công!");
         } catch (Exception e) {
-            model.addAttribute("message", "Không thêm được môn học: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Không thêm được môn học: " + e.getMessage());
+            return "redirect:/addSubject";
         }
-        return "redirect:/";
+        return "redirect:/listSubjects";
+    }
+    @GetMapping("/updateSubject")
+    public String updateSubjectForm() {
+        return "updateSubject";
     }
     @PostMapping("/updateSubject")
-    public String updateStudent(@RequestParam("subjectId") long subjectId,@RequestParam(required = false) String subjectName,
-    @RequestParam(required = false) Integer numberOfslot, Model model) {
+    public String updateStudent(@RequestParam(required = true) long subjectId,@RequestParam(required = false) String subjectName,
+    @RequestParam(required = false) Integer numberOfslot, RedirectAttributes redirectAttributes) {
         String url = "http://localhost:8080/api/v1/subject/" + subjectId+"?name="+subjectName+"&numberOfslot="+numberOfslot;
         try {
-          
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.put(url," ");
 
-            model.addAttribute("message", "Cập nhật môn học thành công!");
-        } catch (HttpClientErrorException.NotFound e) {
-            model.addAttribute("message", "Không tìm thấy môn học để xóa.");
-        } catch (Exception e) {
-            model.addAttribute("message", "Lỗi khi cập nhật môn học: " + e.getMessage());
-        }
+            redirectAttributes.addFlashAttribute("message", "Cập nhật môn học thành công!");
+        }  catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "Lỗi khi cập nhật môn học: " + e.getMessage());
+            return "redirect:/updateStudent";
+}
 
-        return "redirect:/";
+        return "redirect:/listSubjects";
     }
     @GetMapping("/deleteSubject")
     public String deleteSubjectForm() {
@@ -200,42 +201,39 @@ public class HTMLController {
     }
 
     @PostMapping("/deleteSubject")
-    public String deleteSubject(@RequestParam("subjectId") long subjectId, Model model) {
+    public String deleteSubject(@RequestParam(required = true) long subjectId, RedirectAttributes redirectAttributes) {
         String url = "http://localhost:8080/api/v1/subject/" + subjectId;
         try {
             
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.delete(url);
-
-            model.addAttribute("message", "Xóa môn học thành công!");
-        } catch (HttpClientErrorException.NotFound e) {
-            model.addAttribute("message", "Không tìm thấy môn học để xóa.");
-        } catch (Exception e) {
-            model.addAttribute("message", "Lỗi khi xóa môn học: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Xóa môn học thành công!");
+        }  catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "Lỗi khi xóa môn học: " + e.getMessage());
+            return "redirect:/deleteSubject";
         }
 
-        return "redirect:/";
+        return "redirect:/listSubjects";
     }
     @GetMapping("/deleteStudent")
     public String deleteStudentForm() {
         return "deleteStudent";
     }
     @PostMapping("/deleteStudent")
-    public String deleteStudent(@RequestParam("studentId") long studentId, Model model) {
+    public String deleteStudent(@RequestParam("studentId") long studentId, RedirectAttributes redirectAttributes) {
         String url = "http://localhost:8080/api/v1/student/" + studentId;
         try {
             
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.delete(url);
 
-            model.addAttribute("message", "Xóa học sinh thành công!");
-        } catch (HttpClientErrorException.NotFound e) {
-            model.addAttribute("message", "Không tìm thấy sinh viên để xóa.");
-        } catch (Exception e) {
-            model.addAttribute("message", "Lỗi khi xóa học sinh: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Xóa học sinh thành công!");
+        }  catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "Lỗi khi xóa học sinh: " + e.getMessage());
+            return "redirect:/deleteStudent";
         }
 
-        return "redirect:/";
+        return "redirect:/listStudents";
     }
 
 

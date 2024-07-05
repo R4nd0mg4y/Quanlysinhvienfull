@@ -59,6 +59,9 @@
 <body>
     <div class="container">
         <h2>Cập nhật học sinh</h2>
+        <div th:if="${message}" class="message">
+            <p th:text="${message}"></p>
+        </div>
         <form action="/updateStudent" method="post">
             <label for="studentId">ID của học sinh:</label>
             <input type="text" id="studentId" name="studentId" required>

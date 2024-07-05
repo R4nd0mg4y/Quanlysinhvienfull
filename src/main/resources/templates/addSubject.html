@@ -58,6 +58,9 @@
 <body>
     <div class="container">
         <h2>Thêm môn học</h2>
+        <div th:if="${message}" class="message">
+            <p th:text="${message}"></p>
+        </div>
         <form action="/addSubject" method="post">
             <label for="name">Tên:</label>
             <input type="text" id="name" name="name" required>

@@ -58,6 +58,9 @@
 <body>
     <div class="container">
         <h2>Xóa môn học</h2>
+        <div th:if="${message}" class="message">
+            <p th:text="${message}"></p>
+        </div>
         <form action="/deleteSubject" method="post">
             <label for="subjectId">ID của môn học:</label>
             <input type="text" id="subjectId" name="subjectId" required>

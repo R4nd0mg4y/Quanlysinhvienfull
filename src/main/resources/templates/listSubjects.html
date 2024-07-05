@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách môn học</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        a {
+            color: #28a745;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Danh sách môn học</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên</th>
+                    <th>Số lượng học sinh</th>
+                    <th>Số lượng slot</th>
+                    <th>Danh sách học sinh</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="subject : ${subjects}">
+                    <td th:text="${subject.id}"></td>
+                    <td th:text="${subject.name}"></td>
+                    <td th:text="${subject.numberOfStudent}"></td>
+                    <td th:text="${subject.numberOfslot}"></td>
+                    <td>
+                        <ul>
+                            <li th:each="student : ${subject.students}" th:text="${student.id + ' - ' + student.name}"></li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a href="/">Quay lại</a>
+    </div>
+</body>
+</html>

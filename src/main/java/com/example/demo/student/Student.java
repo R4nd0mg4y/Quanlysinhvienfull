@@ -27,16 +27,25 @@ public class Student {
 
     @Transient
     private int age;
+    
+
+   
+
     private int numberOfsubject=0;
     private LocalDate dob;
 
     private String email;
+    
+  
 
     @ElementCollection
     private Set<SubjectInfo> subjects = new HashSet<>();
 
+   
+
     public Student() {
     }
+    
 
     public Student(String name, String email, LocalDate dob) {
         this.name = name;

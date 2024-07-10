@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +17,10 @@ import com.example.demo.subject.Subject;
 @Controller
 public class HTMLController {
 
-    @GetMapping("/index")
+    @GetMapping("/home")
     public String showRegisterForm(Model model) {
         model.addAttribute("message", "Xin chào, đây là thông báo từ controller!");
-        return "index"; 
+        return "home"; 
     }
     @GetMapping("/enroll")
     public String enrollForm() {
@@ -45,7 +44,7 @@ public class HTMLController {
             return "redirect:/enroll";
         }
         
-        return "redirect:/"; // Trả về trang HTML sau khi xử lý
+        return "redirect:/home"; // Trả về trang HTML sau khi xử lý
     }
 
     @GetMapping("/drop")
@@ -70,9 +69,9 @@ public class HTMLController {
             return "redirect:/drop";
         }
         
-        return "redirect:/"; // Trả về trang HTML sau khi xử lý
+        return "redirect:/home"; // Trả về trang HTML sau khi xử lý
     }
-     @GetMapping("/listStudents")
+    @GetMapping("/listStudents")
     public String listStudents(Model model) {
         String listStudentsUrl = "http://localhost:8080/api/v1/student";
         
@@ -94,26 +93,26 @@ public class HTMLController {
         
         
     }
-    @GetMapping("/addStudent")
-    public String addStudentForm() {
-        return "addStudent";
-    }
+    // @GetMapping("/addStudent")
+    // public String addStudentForm() {
+    //     return "addStudent";
+    // }
 
-    @PostMapping("/addStudent")
-    public String addStudent( RedirectAttributes redirectAttributes,@RequestParam(required = true) String name,
-    @RequestParam(required = true) String email,@RequestParam(required = true) LocalDate dob){
-        String url = "http://localhost:8080/api/v1/student";
-        try{
-            Student student = new Student(name,email,dob);
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.postForObject(url,student,Student.class);
-            redirectAttributes.addFlashAttribute("message", "Thêm học sinh thành công!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "Không thêm được sinh viên: " + e.getMessage());
-            return "redirect:/addStudent";
-        }
-        return "redirect:/listStudents";
-    }
+    // @PostMapping("/addStudent")
+    // public String addStudent( RedirectAttributes redirectAttributes,@RequestParam(required = true) String name,
+    // @RequestParam(required = true) String email,@RequestParam(required = true) LocalDate dob){
+    //     String url = "http://localhost:8080/api/v1/student";
+    //     try{
+    //         Student student = new Student(name,email,dob);
+    //         RestTemplate restTemplate = new RestTemplate();
+    //         restTemplate.postForObject(url,student,Student.class);
+    //         redirectAttributes.addFlashAttribute("message", "Thêm học sinh thành công!");
+    //     } catch (Exception e) {
+    //         redirectAttributes.addFlashAttribute("message", "Không thêm được sinh viên: " + e.getMessage());
+    //         return "redirect:/addStudent";
+    //     }
+    //     return "redirect:/listStudents";
+    // }
     @GetMapping("/updateStudent")
     public String updateStudentForm() {
         return "updateStudent";

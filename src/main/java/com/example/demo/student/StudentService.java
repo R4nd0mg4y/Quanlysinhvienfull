@@ -15,7 +15,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class StudentService {
-
+    
     private final StudentRepository studentRepository;
     private final SubjectRepository subjectRepository;
 
@@ -24,6 +24,7 @@ public class StudentService {
         this.studentRepository = studentRepository;
         this.subjectRepository = subjectRepository;
     }
+
     
     public List<Student> getStudents() {
         return studentRepository.findAll();

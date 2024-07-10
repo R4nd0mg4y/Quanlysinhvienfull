@@ -2,13 +2,29 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách môn học</title>
+    <title>List Subjects of Student</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
         }
         .container {
             width: 80%;
@@ -17,7 +33,7 @@
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h2 {
+        h1 {
             color: #333;
         }
         table {
@@ -35,44 +51,40 @@
         th {
             background-color: #f2f2f2;
         }
-        a {
-            color: #28a745;
-            text-decoration: none;
+        .alert {
+            color: red;
             font-weight: bold;
-        }
-        a:hover {
-            text-decoration: underline;
         }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <a href="/">Home</a>
+    </div>
+    
     <div class="container">
-        <h2>Danh sách môn học</h2>
+        <h1>List of Subjects</h1>
+        
+        <div th:if="${message}" class="alert alert-danger" role="alert">
+            <p th:text="${message}">Error fetching subjects</p>
+        </div>
+        
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Tên</th>
-                    <th>Số lượng học sinh</th>
-                    <th>Số lượng slot</th>
-                    <th>Danh sách học sinh</th>
+                    <th>Subject ID</th>
+                    <th>Subject Name</th>
+                    <!-- Add more columns as needed -->
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="subject : ${subjects}">
-                    <td th:text="${subject.id}"></td>
-                    <td th:text="${subject.name}"></td>
-                    <td th:text="${subject.numberOfStudent}"></td>
-                    <td th:text="${subject.numberOfslot}"></td>
-                    <td>
-                        <ul>
-                            <li th:each="student : ${subject.students}" th:text="${student.id + ' - ' + student.name}"></li>
-                        </ul>
-                    </td>
+                    <td th:text="${subject.id}">Subject ID</td>
+                    <td th:text="${subject.name}">Subject Name</td>
+                    <!-- Add more columns as needed -->
                 </tr>
             </tbody>
         </table>
-        <a href="/addSubject">Quay lại</a>
     </div>
 </body>
 </html>

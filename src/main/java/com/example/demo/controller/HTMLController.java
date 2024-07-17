@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -17,11 +18,11 @@ import com.example.demo.subject.Subject;
 @Controller
 public class HTMLController {
 
-    @GetMapping("/home")
-    public String showRegisterForm(Model model) {
-        model.addAttribute("message", "Xin chào, đây là thông báo từ controller!");
-        return "home"; 
-    }
+    // @GetMapping("/home")
+    // public String showRegisterForm(Model model) {
+    //     model.addAttribute("message", "Xin chào, đây là thông báo từ controller!");
+    //     return "home"; 
+    // }
     @GetMapping("/enroll")
     public String enrollForm() {
         return "enroll";
@@ -44,7 +45,7 @@ public class HTMLController {
             return "redirect:/enroll";
         }
         
-        return "redirect:/home"; // Trả về trang HTML sau khi xử lý
+        return "redirect:/"; // Trả về trang HTML sau khi xử lý
     }
 
     @GetMapping("/drop")
@@ -69,7 +70,7 @@ public class HTMLController {
             return "redirect:/drop";
         }
         
-        return "redirect:/home"; // Trả về trang HTML sau khi xử lý
+        return "redirect:/"; 
     }
     @GetMapping("/listStudents")
     public String listStudents(Model model) {
@@ -84,6 +85,7 @@ public class HTMLController {
                     students.add(student);
                 }
             }
+            
             model.addAttribute("students", students);
         } catch (Exception e) {
             model.addAttribute("message", "Lỗi khi lấy danh sách học sinh: " + e.getMessage());
@@ -147,6 +149,7 @@ public class HTMLController {
                     subjects.add(subject);
                 }
             }
+            Collections.sort(subjects);
             model.addAttribute("subjects", subjects);
         } catch (Exception e) {
             model.addAttribute("message", "Lỗi khi lấy danh sách môn học: " + e.getMessage());
@@ -179,13 +182,12 @@ public class HTMLController {
         return "updateSubject";
     }
     @PostMapping("/updateSubject")
-    public String updateStudent(@RequestParam(required = true) long subjectId,@RequestParam(required = false) String subjectName,
-    @RequestParam(required = false) Integer numberOfslot, RedirectAttributes redirectAttributes) {
+    public String updateSubject(@RequestParam(required = true) long subjectId,@RequestParam(required = false) String subjectName,
+    @RequestParam(required = false) String numberOfslot, RedirectAttributes redirectAttributes) {
         String url = "http://localhost:8080/api/v1/subject/" + subjectId+"?name="+subjectName+"&numberOfslot="+numberOfslot;
         try {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.put(url," ");
-
             redirectAttributes.addFlashAttribute("message", "Cập nhật môn học thành công!");
         }  catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Lỗi khi cập nhật môn học: " + e.getMessage());

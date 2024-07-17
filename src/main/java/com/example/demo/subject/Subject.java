@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table
-public class Subject {
+public class Subject implements Comparable<Subject>{
     @Id
     @SequenceGenerator(
         name = "subject_sequence",
@@ -32,13 +32,17 @@ public class Subject {
     private Set<StudentInfo> students = new HashSet<>();
 
     
-    public void add(long id,String StudentName){
+    public void add(long id,String StudentName,String masv){
         numberOfStudent++;
-        students.add(new StudentInfo(id, StudentName));
+        students.add(new StudentInfo(id, StudentName,masv));
     }
     public void drop(long id,String studentName){
         numberOfStudent--;
         students.remove(new StudentInfo(id, studentName));
+    }
+    @Override
+    public int compareTo(Subject other) {
+        return Integer.compare(other.numberOfStudent, this.numberOfStudent);
     }
 
     public Subject(){

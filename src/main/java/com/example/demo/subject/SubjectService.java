@@ -27,16 +27,16 @@ public class SubjectService {
     public void addNewSubject(Subject subject){
         Optional<Subject> subjecOptional = subjectRepository.findSubjectByName(subject.getName().toLowerCase());
         if(subjecOptional.isPresent()){
-            throw new IllegalStateException("Already had this subject");
+            throw new IllegalStateException("Môn học này đã tồn tại");
         }
         subjectRepository.save(subject);
     }
     public void deleteSubject(long subjectId){
         boolean exist = subjectRepository.existsById(subjectId);
         if(!exist){
-            throw new IllegalStateException("We do not have the subject with id of "+subjectId);
+            throw new IllegalStateException("Không có môn học với id là "+subjectId);
         }
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new IllegalStateException("subject with id " + subjectId + " does not exist"));
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new IllegalStateException("Môn học với id là " + subjectId + " không tồn tại"));
         for(StudentInfo studentinfo:subject.getStudents()){
             studentService.dropSubject(studentinfo.getId(),subjectId);
         }
@@ -45,7 +45,7 @@ public class SubjectService {
 
     }
     public void updateSubject(long subjectId, String name, Integer numberOfslot) {
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new IllegalStateException("subject with id " + subjectId + " does not exist"));
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new IllegalStateException("Môn học với id là " + subjectId + " không tồn tại"));
         if(name!=null &&name.length() > 1 &&!Objects.equals(subject.getName(), name)){
 			subject.setName(name);
         List<Student> students = studentRepository.findAll();
@@ -57,6 +57,7 @@ public class SubjectService {
             }
         }
 		}
+    
         if(numberOfslot!=null){
         subject.setNumberOfslot(numberOfslot);
         }

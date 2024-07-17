@@ -1,5 +1,6 @@
 package com.example.demo.student;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,13 +34,13 @@ public class StudentService {
     public void addNewStudent(Student student) {
         Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail().toLowerCase());
         if (studentOptional.isPresent()) {
-            throw new IllegalStateException("email taken");
+            throw new IllegalStateException("Email trùng lặp");
         }
         studentRepository.save(student);
     }
 
     public void deleteStudent(long studentId) {
-      Student  student = studentRepository.findById(studentId).orElseThrow(() -> new IllegalStateException("student with id " + studentId + " does not exist"));
+      Student  student = studentRepository.findById(studentId).orElseThrow(() -> new IllegalStateException("Sinh viên với id là " + studentId + " không tồn tại"));
         for(SubjectInfo subjectInfo:student.getSubjects()){
             dropSubject(studentId,subjectInfo.getId());
             
@@ -50,7 +51,7 @@ public class StudentService {
     @Transactional
     public void updateStudent(long studentId, String name, String email) {
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalStateException("student with id " + studentId + " does not exist"));
+                .orElseThrow(() -> new IllegalStateException("Sinh viên với id là " + studentId + " không tồn tại"));
         
         if (name != null && name.length() > 0 && !Objects.equals(student.getName(), name)) {
             student.setName(name);
@@ -68,18 +69,18 @@ public class StudentService {
         if (email != null && email.length() > 0 && !Objects.equals(student.getEmail(), email)) {
             Optional<Student> studentOptional = studentRepository.findStudentByEmail(email.toLowerCase());
             if (studentOptional.isPresent()) {
-                throw new IllegalStateException("email taken");
+                throw new IllegalStateException("Email bị trùng");
             }
             student.setEmail(email);
         
         }
     }
 
-    public void enrollSubject(long studentId, long subjectId) {
+    public void enrollSubject(long studentId, long subjectId){
         Subject subject = subjectRepository.findById(subjectId)
-                .orElseThrow(() -> new IllegalStateException("subject with id " + subjectId + " does not exist"));
+                .orElseThrow(() -> new IllegalStateException("Môn học với id là " + subjectId + " không tồn tại"));
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalStateException("student with id " + studentId + " does not exist"));
+                .orElseThrow(() -> new IllegalStateException("sinh viên với id là " + studentId + " không tồn tại"));
       
         boolean alreadyEnrolled = false;
         for (SubjectInfo enrolledSubject : student.getSubjects()) {
@@ -89,23 +90,25 @@ public class StudentService {
             }
         }
         if (alreadyEnrolled) {
-            throw new IllegalStateException("Student already enrolled in this subject");
+            throw new IllegalStateException("Sinh viên đã đăng ký môn học này");
         }
         if(subject.getNumberOfslot()<1){
-            throw new IllegalStateException("Out of slot for this course");
+            throw new IllegalStateException("Môn học này đã hết số lượng chỗ trống");
         }
-        student.add(subjectId,subject.getName());
+        student.add(subjectId,subject.getName(),LocalDateTime.now());
         subject.setNumberOfslot(subject.getNumberOfslot()-1);
-        subject.add(studentId,student.getName());
+        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // String masv = authentication.getName();
+        subject.add(studentId,student.getName(),student.getMasv());
         subjectRepository.save(subject);
         studentRepository.save(student);
 
     }
     public void dropSubject(long studentId,long subjectId){
         Subject subject = subjectRepository.findById(subjectId)
-        .orElseThrow(() -> new IllegalStateException("subject with id " + subjectId + " does not exist"));
+        .orElseThrow(() -> new IllegalStateException("Môn học với id là " + subjectId + " không tồn tại"));
         Student student = studentRepository.findById(studentId)
-        .orElseThrow(() -> new IllegalStateException("student with id " + studentId + " does not exist"));
+        .orElseThrow(() -> new IllegalStateException("Sinh viên với id là " + studentId + " không tồn tại"));
         boolean alreadyEnrolled = false;
         for (SubjectInfo enrolledSubject : student.getSubjects()) {
             if (enrolledSubject.getId() == subjectId) {
@@ -114,7 +117,7 @@ public class StudentService {
             }
         }
         if (!alreadyEnrolled) {
-            throw new IllegalStateException("Student have not enrolled in this subject");
+            throw new IllegalStateException("Sinh viên chưa đăng ký môn học này");
         }
         student.drop(subjectId,subject.getName());
         subject.drop(studentId,student.getName());

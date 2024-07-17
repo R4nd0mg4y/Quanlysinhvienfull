@@ -74,6 +74,7 @@
                 <tr>
                     <th>Subject ID</th>
                     <th>Subject Name</th>
+                    <th>Time</th>
                     <!-- Add more columns as needed -->
                 </tr>
             </thead>
@@ -81,6 +82,7 @@
                 <tr th:each="subject : ${subjects}">
                     <td th:text="${subject.id}">Subject ID</td>
                     <td th:text="${subject.name}">Subject Name</td>
+                    <td th:text="${subject.date}">Subject Name</td>
                     <!-- Add more columns as needed -->
                 </tr>
             </tbody>

@@ -66,13 +66,13 @@
                     <td th:text="${subject.numberOfslot}"></td>
                     <td>
                         <ul>
-                            <li th:each="student : ${subject.students}" th:text="${student.id + ' - ' + student.name}"></li>
+                            <li th:each="student : ${subject.students}" th:text="${student.id + ' - ' +student.masv + ' - '+ student.name}"></li>
                         </ul>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <a href="/addSubject">Quay lại</a>
+        <a href="/">Quay lại</a>
     </div>
 </body>
 </html>

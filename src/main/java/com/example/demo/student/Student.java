@@ -1,6 +1,7 @@
 package com.example.demo.student;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,13 +17,22 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "students")
-public class Student {
+public class Student implements Comparable<Student> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "student_sequence")
     @SequenceGenerator(name = "student_sequence", sequenceName = "student_sequence", allocationSize = 1)
     private Long id;
+    public String getMasv() {
+        return masv;
+    }
 
+
+    public void setMasv(String masv) {
+        this.masv = masv;
+    }
+
+    private String masv;
     private String name;
 
     @Transient
@@ -47,10 +57,22 @@ public class Student {
     }
     
 
+    public Student(String masv, String name, String email,LocalDate dob) {
+        this.masv = masv;
+        this.name = name;
+        this.dob = dob;
+        this.email = email;
+    }
+
+
     public Student(String name, String email, LocalDate dob) {
         this.name = name;
         this.email = email;
         this.dob = dob;
+    }
+    @Override
+    public int compareTo(Student other) {
+        return Integer.compare(this.numberOfsubject, other.numberOfsubject);
     }
 
     public Long getId() {
@@ -97,9 +119,9 @@ public class Student {
         this.subjects = subjects;
     }
 
-    public void add(long subjectId,String subjectName) {
+    public void add(long subjectId,String subjectName,LocalDateTime date) {
         numberOfsubject++;
-        subjects.add(new SubjectInfo(subjectId,subjectName));
+        subjects.add(new SubjectInfo(subjectId,subjectName,date));
     }
     public void drop(long subjectId,String subjectName){
         numberOfsubject--;

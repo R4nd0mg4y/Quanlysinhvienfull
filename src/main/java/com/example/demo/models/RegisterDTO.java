@@ -19,6 +19,9 @@ public class RegisterDTO {
 
     @NotNull
     private LocalDate dob;
+
+
+
     @Size(min=8,message="Minium Password length is 8 characters")
     private String password;
     private String role;

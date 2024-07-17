@@ -75,7 +75,7 @@ public class AccountController {
             newUser.setPassword(bCryptEncoder.encode(registerDTO.getPassword()));
             appUserRepository.save(newUser);
             request.login(registerDTO.getMasv(), registerDTO.getPassword());
-            Student student = new Student(newUser.getName(), newUser.getEmail(), newUser.getDob());
+            Student student = new Student(newUser.getMasv(),newUser.getName(), newUser.getEmail(), newUser.getDob());
 
 
             String url = "http://localhost:8080/api/v1/student";
@@ -90,7 +90,7 @@ public class AccountController {
             return "register";
         }
 
-        return "home";
+        return "redirect:/";
     }
     @GetMapping("/studentEnroll")
     public String studentEnrollForm() {
@@ -116,7 +116,7 @@ public class AccountController {
             redirectAttributes.addFlashAttribute("message", "Đăng ký môn học thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Lỗi khi đăng ký môn học: " + e.getMessage());
-            return "redirect:/enroll";
+            return "redirect:/studentEnroll";
         }
         
         return "redirect:/"; // Trả về trang HTML sau khi xử lý
@@ -155,28 +155,28 @@ public class AccountController {
     }
 
     @PostMapping("/studentDrop")
-    public String studentDrop(
-                              @RequestParam("subjectId") long subjectId,
-                              RedirectAttributes redirectAttributes) {
-   
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String masv = authentication.getName();
-        AppUser user = appUserRepository.findByMasv(masv);
-        long id = studentRepository.findStudentByEmail(user.getEmail()).get().getId();
-        String dropUrl = "http://localhost:8080/api/v1/student/" + id + "/drop?subjectId=" + subjectId;
-      
-        try {
-            // Thực hiện yêu cầu HTTP DELETE để xóa môn học
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.delete(dropUrl);
-            redirectAttributes.addFlashAttribute("message", "Xóa môn học thành công!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "Lỗi khi xóa môn học: " + e.getMessage());
-            return "redirect:/studentDrop";
-        }
-        
-        return "redirect:/"; // Trả về trang HTML sau khi xử lý
+public String studentDrop(
+                          @RequestParam("subjectId") long subjectId,
+                          RedirectAttributes redirectAttributes) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String masv = authentication.getName();
+    AppUser user = appUserRepository.findByMasv(masv);
+    long id = studentRepository.findStudentByEmail(user.getEmail()).get().getId();
+    String dropUrl = "http://localhost:8080/api/v1/student/" + id + "/drop?subjectId=" + subjectId;
+  
+    try {
+     
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.delete(dropUrl);
+        redirectAttributes.addFlashAttribute("message", "Xóa môn học thành công!");
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("message", "Lỗi khi xóa môn học: " + e.getMessage());
+        return "redirect:/studentDrop";
     }
+    
+    return "redirect:/"; 
+}
+
 
     @GetMapping("/update")
     public String updateForm() {
@@ -187,18 +187,28 @@ public class AccountController {
                          @RequestParam(required = false) String password,
                          @RequestParam(required = false) String confirmpassword,
                          @RequestParam(required = false) String studentEmail,
-                         RedirectAttributes redirectAttributes,
-                         Model model) {
+                         RedirectAttributes redirectAttributes) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String masv = authentication.getName();
         AppUser user = appUserRepository.findByMasv(masv);
+        // AppUser update = new AppUser();
         long id = studentRepository.findStudentByEmail(user.getEmail()).get().getId();
+        String url = "http://localhost:8080/api/v1/student/" + id + "?name=" + studentName + "&email=" + studentEmail;
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.put(url, null);
+            redirectAttributes.addAttribute("message", "Cập nhật học sinh thành công!");
+     
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "Lỗi khi cập nhật học sinh: " + e.getMessage());
+            return "redirect:/update";
+        }
         if (studentName != null && studentName.length() > 0 && !Objects.equals(user.getName(), studentName)) {
-            user.setEmail(studentEmail);
+            user.setName(studentName);
             
         }
         if (studentEmail!= null && studentEmail.length() > 0 && !Objects.equals(user.getEmail(), studentEmail)) {
-            user.setName(studentName);
+            user.setEmail(studentEmail);
         }
         if (password != null && !password.equals(confirmpassword)) {
             redirectAttributes.addFlashAttribute("message", "Mật khẩu và xác nhận mật khẩu không khớp");
@@ -206,24 +216,12 @@ public class AccountController {
         }
     
         if (password != null && password.length()>=8) {
-            redirectAttributes.addFlashAttribute("message", "Mật khẩu phải có độ dài 8 ký tự trở lên");
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             user.setPassword(encoder.encode(password));
         }
-       
-     
         appUserRepository.save(user);
-        
-        String url = "http://localhost:8080/api/v1/student/" + id + "?name=" + studentName + "&email=" + studentEmail;
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.put(url, null);
-            redirectAttributes.addFlashAttribute("message", "Cập nhật học sinh thành công!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "Lỗi khi cập nhật học sinh: " + e.getMessage());
-            return "redirect:/update";
-        }
-    
+       
+       
         return "redirect:/";
     }
     

@@ -64,7 +64,7 @@
 <body>
     <div class="container">
         <h2>Cập nhật học sinh</h2>
-        <div th:if="${message}" class="message">
+        <div th:if="${message}" >
             <p th:text="${message}"></p>
         </div>
         <form action="/update" method="post">

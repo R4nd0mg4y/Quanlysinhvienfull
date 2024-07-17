@@ -25,7 +25,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/subject/**").permitAll()
                                 .requestMatchers("/api/v1/addSubject").permitAll()
                                 // .requestMatchers("/api/v1/addStudent").permitAll()
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 ).csrf(csrf -> csrf.disable())
                 .formLogin(form -> form
                                 .defaultSuccessUrl("/", true)

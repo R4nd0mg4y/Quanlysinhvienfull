@@ -25,7 +25,7 @@ public class SubjectService {
         return subjectRepository.findAll();
     }
     public void addNewSubject(Subject subject){
-        Optional<Subject> subjecOptional = subjectRepository.findSubjectByName(subject.getName().toLowerCase());
+        Optional<Subject> subjecOptional = subjectRepository.findSubjectByName(subject.getName());
         if(subjecOptional.isPresent()){
             throw new IllegalStateException("Môn học này đã tồn tại");
         }

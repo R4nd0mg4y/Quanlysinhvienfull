@@ -116,7 +116,7 @@ public class AccountController {
             redirectAttributes.addFlashAttribute("message", "Đăng ký môn học thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Lỗi khi đăng ký môn học: " + e.getMessage());
-            return "redirect:/studentEnroll";
+            return "redirect:/";
         }
         
         return "redirect:/"; // Trả về trang HTML sau khi xử lý
@@ -171,10 +171,10 @@ public String studentDrop(
         redirectAttributes.addFlashAttribute("message", "Xóa môn học thành công!");
     } catch (Exception e) {
         redirectAttributes.addFlashAttribute("message", "Lỗi khi xóa môn học: " + e.getMessage());
-        return "redirect:/studentDrop";
+        return "redirect:/listSubjectOfStudent";
     }
     
-    return "redirect:/"; 
+    return "redirect:/listSubjectOfStudent"; 
 }
 
 
@@ -198,14 +198,12 @@ public String studentDrop(
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.put(url, null);
             redirectAttributes.addAttribute("message", "Cập nhật học sinh thành công!");
-     
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Lỗi khi cập nhật học sinh: " + e.getMessage());
             return "redirect:/update";
         }
         if (studentName != null && studentName.length() > 0 && !Objects.equals(user.getName(), studentName)) {
-            user.setName(studentName);
-            
+            user.setName(studentName);  
         }
         if (studentEmail!= null && studentEmail.length() > 0 && !Objects.equals(user.getEmail(), studentEmail)) {
             user.setEmail(studentEmail);

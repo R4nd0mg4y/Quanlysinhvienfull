@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.student.Student;
+import com.example.demo.student.StudentRepository;
 import com.example.demo.subject.Subject;
+import com.example.demo.user.AppUser;
+import com.example.demo.user.AppUserRepository;
 
 @Controller
 public class HTMLController {
@@ -23,6 +27,12 @@ public class HTMLController {
     //     model.addAttribute("message", "Xin chào, đây là thông báo từ controller!");
     //     return "home"; 
     // }
+    @Autowired
+    StudentRepository studentRepository;
+
+    @Autowired
+    AppUserRepository appUserRepository;
+
     @GetMapping("/enroll")
     public String enrollForm() {
         return "enroll";
@@ -42,10 +52,10 @@ public class HTMLController {
             redirectAttributes.addFlashAttribute("message", "Đăng ký môn học thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Lỗi khi đăng ký môn học: " + e.getMessage());
-            return "redirect:/enroll";
+            return "redirect:/listStudents";
         }
         
-        return "redirect:/"; // Trả về trang HTML sau khi xử lý
+        return "redirect:/listStudents"; // Trả về trang HTML sau khi xử lý
     }
 
     @GetMapping("/drop")
@@ -67,10 +77,10 @@ public class HTMLController {
             redirectAttributes.addFlashAttribute("message", "Xóa môn học thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Lỗi khi xóa môn học: " + e.getMessage());
-            return "redirect:/drop";
+            return "redirect:/listStudents";
         }
         
-        return "redirect:/"; 
+        return "redirect:/listStudents"; 
     }
     @GetMapping("/listStudents")
     public String listStudents(Model model) {
@@ -124,14 +134,22 @@ public class HTMLController {
     @RequestParam(required = false) String studentEmail, RedirectAttributes redirectAttributes) {
         String url = "http://localhost:8080/api/v1/student/" + studentId+"?name="+studentName+"&email="+studentEmail;
         try {
-          
+            
             RestTemplate restTemplate = new RestTemplate();
+            String email = studentRepository.findById(studentId).get().getEmail();
+            AppUser appUser = appUserRepository.findByEmail(email);
+             if (studentName != null && studentName.length() > 0 ) {
+                appUser.setName(studentName);  
+            }
+        if (studentEmail!= null && studentEmail.length() > 0 ) {
+                appUser.setEmail(studentEmail);
+            }
+            appUserRepository.save(appUser);
             restTemplate.put(url," ");
-
             redirectAttributes.addFlashAttribute("message", "Cập nhật học sinh thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Lỗi khi cập nhật học sinh: " + e.getMessage());
-            return "redirect:/updateStudent";
+            return "redirect:/listStudents";
         }
 
         return "redirect:/listStudents";
@@ -173,7 +191,7 @@ public class HTMLController {
             redirectAttributes.addFlashAttribute("message", "Thêm môn học thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Không thêm được môn học: " + e.getMessage());
-            return "redirect:/addSubject";
+            return "redirect:/listSubjects";
         }
         return "redirect:/listSubjects";
     }
@@ -191,7 +209,7 @@ public class HTMLController {
             redirectAttributes.addFlashAttribute("message", "Cập nhật môn học thành công!");
         }  catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Lỗi khi cập nhật môn học: " + e.getMessage());
-            return "redirect:/updateStudent";
+            return "redirect:/listSubjects";
 }
 
         return "redirect:/listSubjects";
@@ -211,7 +229,7 @@ public class HTMLController {
             redirectAttributes.addFlashAttribute("message", "Xóa môn học thành công!");
         }  catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Lỗi khi xóa môn học: " + e.getMessage());
-            return "redirect:/deleteSubject";
+            return "redirect:/listSubjects";
         }
 
         return "redirect:/listSubjects";
@@ -226,12 +244,14 @@ public class HTMLController {
         try {
             
             RestTemplate restTemplate = new RestTemplate();
+            String email = studentRepository.findById(studentId).get().getEmail();
+            AppUser appUser = appUserRepository.findByEmail(email);
+            appUserRepository.delete(appUser);
             restTemplate.delete(url);
-
             redirectAttributes.addFlashAttribute("message", "Xóa học sinh thành công!");
         }  catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Lỗi khi xóa học sinh: " + e.getMessage());
-            return "redirect:/deleteStudent";
+            return "redirect:/listStudents";
         }
 
         return "redirect:/listStudents";

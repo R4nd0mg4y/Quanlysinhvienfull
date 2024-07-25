@@ -1,6 +1,7 @@
 package com.example.demo.student;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,13 +41,19 @@ public class StudentService {
     }
 
     public void deleteStudent(long studentId) {
-      Student  student = studentRepository.findById(studentId).orElseThrow(() -> new IllegalStateException("Sinh viên với id là " + studentId + " không tồn tại"));
-        for(SubjectInfo subjectInfo:student.getSubjects()){
-            dropSubject(studentId,subjectInfo.getId());
-            
-        }
-        studentRepository.deleteById(studentId);
+    Student student = studentRepository.findById(studentId)
+            .orElseThrow(() -> new IllegalStateException("Sinh viên với id là " + studentId + " không tồn tại"));
+
+
+    List<SubjectInfo> subjectsCopy = new ArrayList<>(student.getSubjects());
+
+    for (SubjectInfo subjectInfo : subjectsCopy) {
+        dropSubject(studentId, subjectInfo.getId());
     }
+
+    studentRepository.deleteById(studentId);
+}
+
 
     @Transactional
     public void updateStudent(long studentId, String name, String email) {

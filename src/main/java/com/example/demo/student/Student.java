@@ -17,7 +17,7 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "students")
-public class Student implements Comparable<Student> {
+public class Student{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "student_sequence")
@@ -70,10 +70,10 @@ public class Student implements Comparable<Student> {
         this.email = email;
         this.dob = dob;
     }
-    @Override
-    public int compareTo(Student other) {
-        return Integer.compare(this.numberOfsubject, other.numberOfsubject);
-    }
+    // @Override
+    // public int compareTo(Student other) {
+    //     return Integer.compare(this.numberOfsubject, other.numberOfsubject);
+    // }
 
     public Long getId() {
         return id;

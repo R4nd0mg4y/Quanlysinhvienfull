@@ -1,4 +1,5 @@
 package com.example.demo.subject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,19 +32,25 @@ public class SubjectService {
         }
         subjectRepository.save(subject);
     }
-    public void deleteSubject(long subjectId){
-        boolean exist = subjectRepository.existsById(subjectId);
-        if(!exist){
-            throw new IllegalStateException("Không có môn học với id là "+subjectId);
-        }
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new IllegalStateException("Môn học với id là " + subjectId + " không tồn tại"));
-        for(StudentInfo studentinfo:subject.getStudents()){
-            studentService.dropSubject(studentinfo.getId(),subjectId);
-        }
-        subjectRepository.deleteById(subjectId);
-
-
+   public void deleteSubject(long subjectId) {
+    boolean exist = subjectRepository.existsById(subjectId);
+    if (!exist) {
+        throw new IllegalStateException("Không có môn học với id là " + subjectId);
     }
+    Subject subject = subjectRepository.findById(subjectId)
+            .orElseThrow(() -> new IllegalStateException("Môn học với id là " + subjectId + " không tồn tại"));
+
+    // Tạo một bản sao của tập hợp students để tránh ConcurrentModificationException
+    List<StudentInfo> studentsCopy = new ArrayList<>(subject.getStudents());
+
+    // Lặp qua bản sao thay vì tập hợp gốc
+    for (StudentInfo studentInfo : studentsCopy) {
+        studentService.dropSubject(studentInfo.getId(), subjectId);
+    }
+
+    subjectRepository.deleteById(subjectId);
+}
+
     public void updateSubject(long subjectId, String name, Integer numberOfslot) {
         Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new IllegalStateException("Môn học với id là " + subjectId + " không tồn tại"));
         if(name!=null &&name.length() > 1 &&!Objects.equals(subject.getName(), name)){

@@ -136,8 +136,8 @@ public class HTMLController {
         try {
             
             RestTemplate restTemplate = new RestTemplate();
-            String email = studentRepository.findById(studentId).get().getEmail();
-            AppUser appUser = appUserRepository.findByEmail(email);
+            // String email = studentRepository.findById(studentId).get().getEmail();
+            AppUser appUser = appUserRepository.findById(studentId).get();
              if (studentName != null && studentName.length() > 0 ) {
                 appUser.setName(studentName);  
             }
@@ -244,10 +244,10 @@ public class HTMLController {
         try {
             
             RestTemplate restTemplate = new RestTemplate();
-            String email = studentRepository.findById(studentId).get().getEmail();
-            AppUser appUser = appUserRepository.findByEmail(email);
-            appUserRepository.delete(appUser);
+            // String email = studentRepository.findById(studentId).get().getEmail();
+            AppUser appUser = appUserRepository.findById(studentId).get();
             restTemplate.delete(url);
+            appUserRepository.delete(appUser);
             redirectAttributes.addFlashAttribute("message", "Xóa học sinh thành công!");
         }  catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Lỗi khi xóa học sinh: " + e.getMessage());

@@ -104,7 +104,7 @@ public class AccountController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String masv = authentication.getName();
         AppUser user = appUserRepository.findByMasv(masv);
-        long id = studentRepository.findStudentByEmail(user.getEmail()).get().getId();
+        long id = user.getId();
         // long id = 
 
         String enrollUrl = "http://localhost:8080/api/v1/student/" + id + "/enroll?subjectId=" + subjectId;
@@ -129,7 +129,7 @@ public class AccountController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String masv = authentication.getName();
         AppUser user = appUserRepository.findByMasv(masv);
-        long id = studentRepository.findStudentByEmail(user.getEmail()).get().getId();
+        long id = user.getId();
         try {
             // RestTemplate restTemplate = new RestTemplate();
             Student student = studentRepository.findById(id)
@@ -161,7 +161,7 @@ public String studentDrop(
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String masv = authentication.getName();
     AppUser user = appUserRepository.findByMasv(masv);
-    long id = studentRepository.findStudentByEmail(user.getEmail()).get().getId();
+    long id = user.getId();
     String dropUrl = "http://localhost:8080/api/v1/student/" + id + "/drop?subjectId=" + subjectId;
   
     try {
@@ -192,7 +192,7 @@ public String studentDrop(
         String masv = authentication.getName();
         AppUser user = appUserRepository.findByMasv(masv);
         // AppUser update = new AppUser();
-        long id = studentRepository.findStudentByEmail(user.getEmail()).get().getId();
+        long id = user.getId();
         String url = "http://localhost:8080/api/v1/student/" + id + "?name=" + studentName + "&email=" + studentEmail;
         try {
             RestTemplate restTemplate = new RestTemplate();

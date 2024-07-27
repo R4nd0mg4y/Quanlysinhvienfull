@@ -8,12 +8,11 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.subject.StudentInfo;
 import com.example.demo.subject.Subject;
 import com.example.demo.subject.SubjectRepository;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class StudentService {
@@ -39,7 +38,7 @@ public class StudentService {
         }
         studentRepository.save(student);
     }
-
+    @Transactional
     public void deleteStudent(long studentId) {
     Student student = studentRepository.findById(studentId)
             .orElseThrow(() -> new IllegalStateException("Sinh viên với id là " + studentId + " không tồn tại"));
@@ -72,7 +71,6 @@ public class StudentService {
             }
         
         }
-        
         if (email != null && email.length() > 0 && !Objects.equals(student.getEmail(), email)) {
             Optional<Student> studentOptional = studentRepository.findStudentByEmail(email.toLowerCase());
             if (studentOptional.isPresent()) {
@@ -82,7 +80,7 @@ public class StudentService {
         
         }
     }
-
+    @Transactional
     public void enrollSubject(long studentId, long subjectId){
         Subject subject = subjectRepository.findById(subjectId)
                 .orElseThrow(() -> new IllegalStateException("Môn học với id là " + subjectId + " không tồn tại"));
@@ -111,6 +109,7 @@ public class StudentService {
         studentRepository.save(student);
 
     }
+    @Transactional
     public void dropSubject(long studentId,long subjectId){
         Subject subject = subjectRepository.findById(subjectId)
         .orElseThrow(() -> new IllegalStateException("Môn học với id là " + subjectId + " không tồn tại"));

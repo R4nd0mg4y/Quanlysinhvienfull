@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -45,6 +46,7 @@ public class AccountController {
     }
 
     @PostMapping("/register")
+    @Transactional
     public String register(Model model, @Valid @ModelAttribute("registerDTO") RegisterDTO registerDTO,
                            BindingResult result, HttpServletRequest request, RestTemplate restTemplate) {
         if (!registerDTO.getPassword().equals(registerDTO.getConfirmPassword())) {
@@ -155,7 +157,8 @@ public class AccountController {
     }
 
     @PostMapping("/studentDrop")
-public String studentDrop(
+    @Transactional
+    public String studentDrop(
                           @RequestParam("subjectId") long subjectId,
                           RedirectAttributes redirectAttributes) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -183,6 +186,7 @@ public String studentDrop(
         return "update";
     }
     @PostMapping("/update")
+    @Transactional
     public String update(@RequestParam(required = false) String studentName,
                          @RequestParam(required = false) String password,
                          @RequestParam(required = false) String confirmpassword,
@@ -222,7 +226,5 @@ public String studentDrop(
        
         return "redirect:/";
     }
-    
 
-    
 }

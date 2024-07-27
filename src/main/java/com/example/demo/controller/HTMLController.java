@@ -14,10 +14,12 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.student.Student;
-import com.example.demo.student.StudentRepository;
+// import com.example.demo.student.StudentRepository;
 import com.example.demo.subject.Subject;
 import com.example.demo.user.AppUser;
 import com.example.demo.user.AppUserRepository;
+
+import jakarta.transaction.Transactional;
 
 @Controller
 public class HTMLController {
@@ -27,8 +29,8 @@ public class HTMLController {
     //     model.addAttribute("message", "Xin chào, đây là thông báo từ controller!");
     //     return "home"; 
     // }
-    @Autowired
-    StudentRepository studentRepository;
+    // @Autowired
+    // StudentRepository studentRepository;
 
     @Autowired
     AppUserRepository appUserRepository;
@@ -239,6 +241,7 @@ public class HTMLController {
         return "deleteStudent";
     }
     @PostMapping("/deleteStudent")
+    @Transactional
     public String deleteStudent(@RequestParam("studentId") long studentId, RedirectAttributes redirectAttributes) {
         String url = "http://localhost:8080/api/v1/student/" + studentId;
         try {

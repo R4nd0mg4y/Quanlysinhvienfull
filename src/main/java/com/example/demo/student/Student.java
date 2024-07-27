@@ -17,7 +17,7 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "students")
-public class Student{
+public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "student_sequence")

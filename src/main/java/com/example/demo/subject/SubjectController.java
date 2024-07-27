@@ -26,10 +26,7 @@ public class SubjectController {
     public List<Subject> getSubject(){
         return subjectService.getSubjects();
     }
-    public String getMethodName(@RequestParam String param) {
-        return new String();
-    }
-    
+
     @PostMapping
     public void addNewSubject(@RequestBody Subject subject) {
         subjectService.addNewSubject(subject);

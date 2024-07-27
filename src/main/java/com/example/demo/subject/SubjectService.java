@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.student.Student;
 import com.example.demo.student.StudentRepository;
@@ -50,7 +51,7 @@ public class SubjectService {
 
     subjectRepository.deleteById(subjectId);
 }
-
+    @Transactional
     public void updateSubject(long subjectId, String name, Integer numberOfslot) {
         Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new IllegalStateException("Môn học với id là " + subjectId + " không tồn tại"));
         if(name!=null &&name.length() > 1 &&!Objects.equals(subject.getName(), name)){

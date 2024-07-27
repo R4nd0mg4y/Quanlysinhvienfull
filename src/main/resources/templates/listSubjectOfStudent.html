@@ -48,7 +48,8 @@
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <div class="container" sec:authorize="isAuthenticated()">
         <h1 class="mt-4">List of Subjects</h1>
         <table class="table table-striped">
             <thead>

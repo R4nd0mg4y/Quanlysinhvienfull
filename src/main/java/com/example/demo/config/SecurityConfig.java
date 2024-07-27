@@ -18,14 +18,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/", "/register", "/login", "/logout", "/contact").permitAll()
-                                .requestMatchers("/api/v1/student").permitAll()
-                                .requestMatchers("/api/v1/subject").permitAll()
-                                .requestMatchers("/api/v1/student/**").permitAll()
+                                .requestMatchers("/", "/register", "/login", "/contact").permitAll()
+                                // .requestMatchers("/api/v1/student").permitAll()
                                 .requestMatchers("/api/v1/subject/**").permitAll()
-                                .requestMatchers("/api/v1/addSubject").permitAll()
+                                .requestMatchers("/api/v1/student/**").permitAll()
+                                // .requestMatchers("/api/v1/student/**").permitAll()
+                                // .requestMatchers("/api/v1/subject/**").permitAll()
+                                // .requestMatchers("/api/v1/addSubject").permitAll()
                                 // .requestMatchers("/api/v1/addStudent").permitAll()
-                                .anyRequest().permitAll()
+                                .anyRequest().authenticated()
                 ).csrf(csrf -> csrf.disable())
                 .formLogin(form -> form
                                 .defaultSuccessUrl("/", true)
